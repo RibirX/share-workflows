@@ -4,23 +4,29 @@ on:
   workflow_call:
 
 jobs:
-  test-win-features:
+  windows:
     runs-on: [self-hosted, windows, gpu]
+    steps:
+      - uses: actions/checkout@v3
+      - name: install rust nightly
+        run: rustup override set nightly-2023-02-01
+        shell: cmd
+      - name: llvm-cov test
+        run: cargo test --all-features
+        shell: cmd
+  macOs:
+    runs-on: [self-hosted, macos, gpu]
     steps:
       - uses: actions/checkout@v3
       - name: install rust nightly
         run: |
           rustup override set nightly-2023-02-01
-          rustup component add llvm-tools-preview --toolchain nightly
+          rustup component add llvm-tools-preview --toolchain nightly-2023-02-01
           cargo install cargo-llvm-cov
-        shell: cmd
       - name: llvm-cov test
         run: cargo llvm-cov --workspace --lcov --output-path lcov.info --all-features
-        shell: cmd
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
           files: lcov.info
           fail_ci_if_error: false
-          verbose: true
-          upstream_proxy: "http://127.0.0.1:7890"
