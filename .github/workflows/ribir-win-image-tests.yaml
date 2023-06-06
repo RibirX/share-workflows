@@ -4,24 +4,14 @@ on:
   workflow_call:
 
 jobs:
-  windows:
-    runs-on: [self-hosted, windows, gpu]
-    steps:
-      - uses: actions/checkout@v3
-      - name: install rust nightly
-        run: rustup override set nightly-2023-02-01
-        shell: cmd
-      - name: llvm-cov test
-        run: cargo test --all-features
-        shell: cmd
-  macOs:
-    runs-on: [self-hosted, macos, gpu]
+  linux:
+    runs-on: [self-hosted, linux, gpu]
     steps:
       - uses: actions/checkout@v3
       - name: install rust nightly
         run: |
-          rustup override set nightly-2023-02-01
-          rustup component add llvm-tools-preview --toolchain nightly-2023-02-01
+          rustup override set nightly-2023-03-01
+          rustup component add llvm-tools-preview --toolchain nightly-2023-03-01
           cargo install cargo-llvm-cov
       - name: llvm-cov test
         run: cargo llvm-cov --workspace --lcov --output-path lcov.info --all-features
@@ -30,3 +20,21 @@ jobs:
         with:
           files: lcov.info
           fail_ci_if_error: false
+  Windows:
+    runs-on: [self-hosted, windows, gpu]
+    steps:
+      - uses: actions/checkout@v3
+      - name: install rust nightly
+        run: rustup override set nightly-2023-03-01
+        shell: cmd
+      - name: test
+        run: cargo test --all-features
+        shell: cmd
+  macOs:
+    runs-on: [self-hosted, macos, gpu]
+    steps:
+      - uses: actions/checkout@v3
+      - name: install rust nightly
+        run: rustup override set nightly-2023-03-01
+      - name: test
+        run: cargo test --all-features
