@@ -4,14 +4,14 @@ on:
   workflow_call:
 
 jobs:
-  windows:
+  Windows:
     runs-on: [self-hosted, windows, gpu]
     steps:
       - uses: actions/checkout@v3
       - name: install rust nightly
         run: rustup override set nightly-2023-02-01
         shell: cmd
-      - name: llvm-cov test
+      - name: test
         run: cargo test --all-features
         shell: cmd
   macOs:
