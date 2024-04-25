@@ -28,7 +28,8 @@ jobs:
         run: rustup override set nightly-2024-04-20
         shell: cmd
       - name: test
-        run: cargo test --all-features
+        # Wgpu may deadlock, [See](https://github.com/gfx-rs/wgpu/issues/5279)
+        run: cargo test --all-features -- --test-threads=1
         shell: cmd
   macOs:
     runs-on: [self-hosted, macos, gpu]
